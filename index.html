@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FruitMart - Toko Buah Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-purple: #8B7CF6;
+            --light-purple: #A78BFA;
+            --very-light-purple: #E9E5FF;
+            --dark-purple: #6D28D9;
+            --soft-purple: #F3F0FF;
+            --text-dark: #374151;
+            --text-light: #6B7280;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--soft-purple) 0%, var(--very-light-purple) 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(139, 124, 246, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-purple);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: "🍎";
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-purple);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-purple);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideDown 1s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary-purple), var(--light-purple));
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(139, 124, 246, 0.3);
+            animation: slideUp 1s ease 0.6s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(139, 124, 246, 0.4);
+        }
+
+        /* Admin Panel Toggle */
+        .admin-toggle {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: var(--primary-purple);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(139, 124, 246, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .admin-toggle:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 12px 35px rgba(139, 124, 246, 0.4);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .admin-panel.active {
+            right: 0;
+        }
+
+        .admin-panel h2 {
+            color: var(--primary-purple);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--very-light-purple);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-purple);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Products Section */
+        .products-section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--primary-purple);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(139, 124, 246, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-purple), var(--light-purple));
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(139, 124, 246, 0.2);
+        }
+
+        .product-image {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-stock {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        /* Search and Filter */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .search-input {
+            flex: 1;
+            max-width: 300px;
+            padding: 12px 20px;
+            border: 2px solid var(--very-light-purple);
+            border-radius: 25px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            border: 2px solid var(--very-light-purple);
+            border-radius: 25px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Close Button */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 4rem 0;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .about-text h3 {
+            color: var(--primary-purple);
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(139, 124, 246, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .feature-item h4 {
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-purple), var(--light-purple));
+            color: white;
+            padding: 2rem 1rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(139, 124, 246, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--very-light-purple) 0%, var(--soft-purple) 100%);
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .contact-info h3 {
+            color: var(--primary-purple);
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .contact-grid {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(139, 124, 246, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateX(10px);
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            min-width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--light-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+        }
+
+        .contact-details h4 {
+            color: var(--primary-purple);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-details p {
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .social-media {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(139, 124, 246, 0.1);
+        }
+
+        .social-media h4 {
+            color: var(--primary-purple);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: var(--soft-purple);
+            border-radius: 25px;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary-purple);
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .social-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Contact Form */
+        .contact-form-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(139, 124, 246, 0.15);
+        }
+
+        .contact-form-container h3 {
+            color: var(--primary-purple);
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-large {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--dark-purple), var(--primary-purple));
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .admin-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .admin-toggle {
+                right: 10px;
+                width: 50px;
+                height: 50px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-input {
+                max-width: none;
+            }
+            
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+
+    <header>
+        <nav class="container">
+            <div class="logo">FruitMart</div>
+            <ul class="nav-links">
+                <li><a href="#home">Beranda</a></li>
+                <li><a href="#products">Produk</a></li>
+                <li><a href="#about">Tentang</a></li>
+                <li><a href="#contact">Kontak</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="container">
+                <h1>Buah Segar Setiap Hari</h1>
+                <p>Temukan berbagai buah segar berkualitas tinggi langsung dari kebun ke meja Anda</p>
+                <button class="cta-button" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
+                    Jelajahi Produk
+                </button>
+            </div>
+        </section>
+
+        <section class="products-section" id="products">
+            <div class="container">
+                <h2 class="section-title">Katalog Buah</h2>
+                
+                <div class="controls">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Cari buah...">
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="">Semua Kategori</option>
+                        <option value="lokal">Buah Lokal</option>
+                        <option value="import">Buah Import</option>
+                        <option value="organik">Buah Organik</option>
+                    </select>
+                    <select class="filter-select" id="stockFilter">
+                        <option value="">Semua Stok</option>
+                        <option value="available">Tersedia</option>
+                        <option value="low">Stok Menipis</option>
+                        <option value="out">Habis</option>
+                    </select>
+                </div>
+
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be dynamically inserted here -->
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-state-icon">🔍</div>
+                    <h3>Tidak ada produk ditemukan</h3>
+                    <p>Coba ubah filter pencarian Anda</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section" id="about">
+            <div class="container">
+                <h2 class="section-title">Tentang FruitMart</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>🌱 Misi Kami</h3>
+                        <p>FruitMart berkomitmen untuk menyediakan buah-buahan segar berkualitas tinggi langsung dari petani lokal ke meja Anda. Kami percaya bahwa setiap keluarga berhak mendapatkan nutrisi terbaik dari alam.</p>
+                        
+                        <h3>🚚 Mengapa Memilih Kami?</h3>
+                        <div class="features-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon">🍎</div>
+                                <h4>Kualitas Premium</h4>
+                                <p>Buah pilihan terbaik dengan standar kualitas tinggi</p>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">🚛</div>
+                                <h4>Pengiriman Cepat</h4>
+                                <p>Pengiriman same-day untuk area Bandar Lampung</p>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">💚</div>
+                                <h4>Ramah Lingkungan</h4>
+                                <p>Kemasan eco-friendly dan mendukung petani lokal</p>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon">💰</div>
+                                <h4>Harga Terjangkau</h4>
+                                <p>Harga langsung dari petani tanpa perantara</p>
+                            </div>
+                        </div>
+                        
+                        <h3>🏆 Pencapaian Kami</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number">1000+</div>
+                                <div class="stat-label">Pelanggan Puas</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">50+</div>
+                                <div class="stat-label">Jenis Buah</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">25+</div>
+                                <div class="stat-label">Petani Mitra</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">3</div>
+                                <div class="stat-label">Tahun Berpengalaman</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section" id="contact">
+            <div class="container">
+                <h2 class="section-title">Hubungi Kami</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h3>📍 Informasi Kontak</h3>
+                        <div class="contact-grid">
+                            <div class="contact-item">
+                                <div class="contact-icon">📍</div>
+                                <div class="contact-details">
+                                    <h4>Alamat</h4>
+                                    <p>Jl. Zainal Abidin Pagar Alam No. 123<br>Bandar Lampung, Lampung 35142</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">📱</div>
+                                <div class="contact-details">
+                                    <h4>Telepon & WhatsApp</h4>
+                                    <p>+62 812-3456-7890<br>+62 821-9876-5432</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">✉️</div>
+                                <div class="contact-details">
+                                    <h4>Email</h4>
+                                    <p>info@fruitmart.id<br>order@fruitmart.id</p>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">🕒</div>
+                                <div class="contact-details">
+                                    <h4>Jam Operasional</h4>
+                                    <p>Senin - Sabtu: 08:00 - 20:00<br>Minggu: 09:00 - 18:00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="social-media">
+                            <h4>📱 Ikuti Kami</h4>
+                            <div class="social-links">
+                                <a href="#" class="social-link instagram">
+                                    <span class="social-icon">📷</span>
+                                    <span>@fruitmart.id</span>
+                                </a>
+                                <a href="#" class="social-link facebook">
+                                    <span class="social-icon">👥</span>
+                                    <span>FruitMart Lampung</span>
+                                </a>
+                                <a href="#" class="social-link tiktok">
+                                    <span class="social-icon">🎵</span>
+                                    <span>@fruitmart_id</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-container">
+                        <h3>💬 Kirim Pesan</h3>
+                        <form class="contact-form" id="contactForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contactName">Nama Lengkap</label>
+                                    <input type="text" id="contactName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactPhone">Nomor Telepon</label>
+                                    <input type="tel" id="contactPhone" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmail">Email</label>
+                                <input type="email" id="contactEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactSubject">Subjek</label>
+                                <select id="contactSubject" required>
+                                    <option value="">Pilih Subjek</option>
+                                    <option value="order">Pemesanan</option>
+                                    <option value="complaint">Keluhan</option>
+                                    <option value="partnership">Kemitraan</option>
+                                    <option value="other">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactMessage">Pesan</label>
+                                <textarea id="contactMessage" rows="5" required placeholder="Tulis pesan Anda di sini..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-large">
+                                Kirim Pesan 📨
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">FruitMart</div>
+                    <p>Buah segar berkualitas untuk hidup yang lebih sehat</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Produk</h4>
+                    <ul>
+                        <li><a href="#">Buah Lokal</a></li>
+                        <li><a href="#">Buah Import</a></li>
+                        <li><a href="#">Buah Organik</a></li>
+                        <li><a href="#">Paket Buah</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Layanan</h4>
+                    <ul>
+                        <li><a href="#">Pengiriman</a></li>
+                        <li><a href="#">Konsultasi Gizi</a></li>
+                        <li><a href="#">Program Berlangganan</a></li>
+                        <li><a href="#">Kemitraan Petani</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Kontak</h4>
+                    <ul>
+                        <li>📍 Bandar Lampung, Lampung</li>
+                        <li>📱 +62 812-3456-7890</li>
+                        <li>✉️ info@fruitmart.id</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 FruitMart. Semua hak cipta dilindungi.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="admin-toggle" onclick="toggleAdminPanel()">
+        ⚙️
+    </button>
+
+    <div class="admin-panel" id="adminPanel">
+        <button class="close-btn" onclick="toggleAdminPanel()">×</button>
+        <h2>Admin Panel</h2>
+        
+        <form id="productForm">
+            <div class="form-group">
+                <label for="productName">Nama Buah</label>
+                <input type="text" id="productName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="productEmoji">Emoji Buah</label>
+                <input type="text" id="productEmoji" placeholder="🍎" maxlength="2">
+            </div>
+            
+            <div class="form-group">
+                <label for="productPrice">Harga (Rp)</label>
+                <input type="number" id="productPrice" min="0" step="1000" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="productStock">Stok (kg)</label>
+                <input type="number" id="productStock" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="productCategory">Kategori</label>
+                <select id="productCategory" required>
+                    <option value="">Pilih Kategori</option>
+                    <option value="lokal">Buah Lokal</option>
+                    <option value="import">Buah Import</option>
+                    <option value="organik">Buah Organik</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="productDescription">Deskripsi</label>
+                <textarea id="productDescription" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                Tambah Produk
+            </button>
+            <button type="button" class="btn btn-warning" id="cancelBtn" onclick="cancelEdit()" style="display: none;">
+                Batal Edit
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let products = [
+            {
+                id: 1,
+                name: "Apel Malang",
+                emoji: "🍎",
+                price: 25000,
+                stock: 50,
+                category: "lokal",
+                description: "Apel segar dari Malang dengan rasa manis dan tekstur renyah"
+            },
+            {
+                id: 2,
+                name: "Jeruk Bali",
+                emoji: "🍊",
+                price: 15000,
+                stock: 30,
+                category: "lokal",
+                description: "Jeruk manis khas Bali dengan kandungan vitamin C tinggi"
+            },
+            {
+                id: 3,
+                name: "Pisang Cavendish",
+                emoji: "🍌",
+                price: 20000,
+                stock: 80,
+                category: "import",
+                description: "Pisang import berkualitas dengan tekstur lembut"
+            },
+            {
+                id: 4,
+                name: "Mangga Harum Manis",
+                emoji: "🥭",
+                price: 35000,
+                stock: 0,
+                category: "lokal",
+                description: "Mangga lokal dengan aroma harum dan rasa manis"
+            },
+            {
+                id: 5,
+                name: "Anggur Organik",
+                emoji: "🍇",
+                price: 45000,
+                stock: 15,
+                category: "organik",
+                description: "Anggur organik tanpa pestisida dengan rasa segar"
+            }
+        ];
+
+        let editingId = null;
+        let nextId = 6;
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+
+        function getStockStatus(stock) {
+            if (stock === 0) return { text: 'Habis', class: 'danger' };
+            if (stock < 20) return { text: 'Stok Menipis', class: 'warning' };
+            return { text: 'Tersedia', class: 'success' };
+        }
+
+        function renderProducts(productsToRender = products) {
+            const grid = document.getElementById('productsGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (productsToRender.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            grid.innerHTML = productsToRender.map(product => {
+                const stockStatus = getStockStatus(product.stock);
+                return `
+                    <div class="product-card">
+                        <div class="product-image">${product.emoji}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${formatPrice(product.price)}/kg</div>
+                        <div class="product-stock">Stok: ${product.stock} kg - <span class="btn-${stockStatus.class}" style="padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">${stockStatus.text}</span></div>
+                        <div class="product-actions">
+                            <button class="btn btn-warning btn-sm" onclick="editProduct(${product.id})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">Hapus</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const stockFilter = document.getElementById('stockFilter').value;
+            
+            let filtered = products.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm) ||
+                                    product.description.toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = !categoryFilter || product.category === categoryFilter;
+                
+                let matchesStock = true;
+                if (stockFilter === 'available') matchesStock = product.stock > 20;
+                else if (stockFilter === 'low') matchesStock = product.stock > 0 && product.stock <= 20;
+                else if (stockFilter === 'out') matchesStock = product.stock === 0;
+                
+                return matchesSearch && matchesCategory && matchesStock;
+            });
+            
+            renderProducts(filtered);
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('active');
+        }
+
+        function addProduct(productData) {
+            const product = {
+                id: nextId++,
+                ...productData
+            };
+            products.push(product);
+            renderProducts();
+            filterProducts();
+            showNotification('Produk berhasil ditambahkan!');
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            
+            editingId = id;
+            
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productEmoji').value = product.emoji;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productStock').value = product.stock;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('productDescription').value = product.description;
+            
+            document.getElementById('submitBtn').textContent = 'Update Produk';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+            
+            toggleAdminPanel();
+        }
+
+        function updateProduct(id, productData) {
+            const index = products.findIndex(p => p.id === id);
+            if (index !== -1) {
+                products[index] = { id, ...productData };
+                renderProducts();
+                filterProducts();
+                showNotification('Produk berhasil diupdate!');
+            }
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+                products = products.filter(p => p.id !== id);
+                renderProducts();
+                filterProducts();
+                showNotification('Produk berhasil dihapus!');
+            }
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('productForm').reset();
+            document.getElementById('submitBtn').textContent = 'Tambah Produk';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        // Event Listeners
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const productData = {
+                name: document.getElementById('productName').value,
+                emoji: document.getElementById('productEmoji').value || '🍎',
+                price: parseInt(document.getElementById('productPrice').value),
+                stock: parseInt(document.getElementById('productStock').value),
+                category: document.getElementById('productCategory').value,
+                description: document.getElementById('productDescription').value
+            };
+            
+            if (editingId) {
+                updateProduct(editingId, productData);
+                cancelEdit();
+            } else {
+                addProduct(productData);
+            }
+            
+            e.target.reset();
+            toggleAdminPanel();
+        });
+// Tambahan fitur keranjang
+let cart = [];
+
+function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    if (!product || product.stock === 0) {
+        showNotification("Stok produk habis!", "error");
+        return;
+    }
+
+    const itemInCart = cart.find(item => item.id === id);
+    if (itemInCart) {
+        itemInCart.qty += 1;
+    } else {
+        cart.push({ ...product, qty: 1 });
+    }
+
+    product.stock -= 1;
+    renderProducts();
+    filterProducts();
+    showNotification("Ditambahkan ke keranjang");
+    renderCart();
+}
+
+function renderCart() {
+    let cartPanel = document.getElementById('cartPanel');
+    if (!cartPanel) {
+        cartPanel = document.createElement('div');
+        cartPanel.id = 'cartPanel';
+        cartPanel.style.position = 'fixed';
+        cartPanel.style.bottom = '20px';
+        cartPanel.style.right = '20px';
+        cartPanel.style.background = 'white';
+        cartPanel.style.padding = '1rem';
+        cartPanel.style.borderRadius = '10px';
+        cartPanel.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
+        cartPanel.style.zIndex = '1002';
+        cartPanel.style.maxWidth = '300px';
+        cartPanel.innerHTML = '<h3>🛒 Keranjang</h3><ul id="cartList"></ul><button class="btn btn-primary" onclick="checkoutCart()">Checkout</button>';
+        document.body.appendChild(cartPanel);
+    }
+
+    const cartList = document.getElementById('cartList');
+    cartList.innerHTML = cart.map(item => `<li>${item.emoji} ${item.name} x ${item.qty}</li>`).join('');
+}
+
+function checkoutCart() {
+    if (cart.length === 0) {
+        showNotification("Keranjang kosong!", "error");
+        return;
+    }
+
+    alert("Terima kasih atas pembelian Anda! Detail akan dikirim ke email Anda.");
+    cart = [];
+    renderCart();
+}
+
+// Tambahkan tombol "Beli" ke dalam fungsi renderProducts
+const originalRenderProducts = renderProducts;
+renderProducts = function(productsToRender = products) {
+    const grid = document.getElementById('productsGrid');
+    const emptyState = document.getElementById('emptyState');
+
+    if (productsToRender.length === 0) {
+        grid.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+    }
+
+    grid.style.display = 'grid';
+    emptyState.style.display = 'none';
+
+    grid.innerHTML = productsToRender.map(product => {
+        const stockStatus = getStockStatus(product.stock);
+        return `
+            <div class="product-card">
+                <div class="product-image">${product.emoji}</div>
+                <div class="product-name">${product.name}</div>
+                <div class="product-price">${formatPrice(product.price)}/kg</div>
+                <div class="product-stock">Stok: ${product.stock} kg - <span class="btn-${stockStatus.class}" style="padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">${stockStatus.text}</span></div>
+                <div class="product-actions">
+                    <button class="btn btn-success btn-sm" onclick="addToCart(${product.id})">Beli</button>
+                    <button class="btn btn-warning btn-sm" onclick="editProduct(${product.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">Hapus</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Jalankan ulang render setelah inisialisasi
+renderProducts();
+
+        document.getElementById('searchInput').addEventListener('input', filterProducts);
+        document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+        document.getElementById('stockFilter').addEventListener('change', filterProducts);
+
+        // Close admin panel when clicking outside
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('adminPanel');
+            const toggle = document.querySelector('.admin-toggle');
+            
+            if (!panel.contains(e.target) && !toggle.contains(e.target) && panel.classList.contains('active')) {
+                panel.classList.remove('active');
+            }
+        });
+
+        // Contact Form Handler
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('contactName').value;
+            const phone = document.getElementById('contactPhone').value;
+            const email = document.getElementById('contactEmail').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+            
+            // Simulate form submission
+            showNotification('Pesan Anda berhasil dikirim! Kami akan segera menghubungi Anda.', 'success');
+            
+            // Reset form
+            e.target.reset();
+        });
+
+        // Initialize
+        renderProducts();
+    </script>
+</body>
+</html>
